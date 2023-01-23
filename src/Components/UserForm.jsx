@@ -23,90 +23,93 @@ const UserForm = (props) => {
 
     const [iguales, setIguales] = useState(true);
 
-    const validar = (e) => {
+    const validarNameAndLastName = (e) => {
+        const { name, value } = e.target;
         setForm({
             ...form,
-            [e.target.name]: e.target.value,
+            [name]: value,
         });
 
-        if (e.target.name === "firstName" && e.target.value.length < 2) {
-            setErrors({
-                ...errors,
-                firstNameError: "Nombre tiene menos de 2 caracteres",
-            });
+        switch (name) {
+            case "firstName":
+                value.length < 2 && value.length !== 0
+                    ? setErrors({
+                          ...errors,
+                          firstNameError: "Nombre tiene menos de 2 caracteres",
+                      })
+                    : setErrors({
+                          ...errors,
+                          firstNameError: "",
+                      });
+                break;
+            case "lastName":
+                value.length < 2 && value.length !== 0
+                    ? setErrors({
+                          ...errors,
+                          lastNameError: "Apellido tiene menos de 2 caracteres",
+                      })
+                    : setErrors({
+                          ...errors,
+                          lastNameError: "",
+                      });
+                break;
+            default:
+                break;
         }
-        if (
-            e.target.name === "firstName" &&
-            (e.target.value.length >= 2 || e.target.value.length === 0)
-        ) {
-            setErrors({
-                ...errors,
-                firstNameError: "",
-            });
-        }
-
-        if (e.target.name === "lastName" && e.target.value.length < 2) {
-            setErrors({
-                ...errors,
-                lastNameError: "Apellido tiene menos de 2 caracteres",
-            });
-        }
-        if (
-            e.target.name === "lastName" &&
-            (e.target.value.length >= 2 || e.target.value.length === 0)
-        ) {
-            setErrors({
-                ...errors,
-                lastNameError: "",
-            });
-        }
-
-        if (e.target.name === "email" && e.target.value.length < 5) {
+    };
+    const validarEmail = (e) => {
+        const { name, value } = e.target;
+        setForm({
+            ...form,
+            [name]: value,
+        });
+        if (name === "email" && value.length < 5 && value.length !== 0) {
             setErrors({
                 ...errors,
                 emailError: "Email tiene menos de 5 caracteres",
             });
-        }
-        if (
-            e.target.name === "email" &&
-            (e.target.value.length >= 5 || e.target.value.length === 0)
-        ) {
+        } else {
             setErrors({
                 ...errors,
                 emailError: "",
             });
         }
+    };
 
-        if (e.target.name === "password" && e.target.value.length < 8) {
-            setErrors({
-                ...errors,
-                passwordError: "Contraseña debe tener al menos 8 caracteres",
-            });
-        }
-        if (
-            e.target.name === "password" &&
-            (e.target.value.length >= 8 || e.target.value.length === 0)
-        ) {
-            setErrors({
-                ...errors,
-                passwordError: "",
-            });
-        }
-        if (e.target.name === "confirmPassword" && e.target.value.length < 8) {
-            setErrors({
-                ...errors,
-                confirmPasswordError:
-                    "Contraseña debe tener al menos 8 caracteres",
-            });
-        }
-        if (
-            e.target.name === "confirmPassword" &&
-            (e.target.value.length >= 8 || e.target.value.length === 0)
-        ) {
-            setErrors({
-                ...errors,
-                confirmPasswordError: "",
-            });
+    const validarPasword = (e) => {
+        const { name, value } = e.target;
+        setForm({
+            ...form,
+            [name]: value,
+        });
+
+        switch (name) {
+            case "password":
+                value.length < 8 && value.length !== 0
+                    ? setErrors({
+                          ...errors,
+                          passwordError:
+                              "Contraseña debe tener al menos 8 caracteres",
+                      })
+                    : setErrors({
+                          ...errors,
+                          passwordError: "",
+                      });
+                break;
+            case "confirmPassword":
+                value.length < 8 && value.length !== 0
+                    ? setErrors({
+                          ...errors,
+                          confirmPasswordError:
+                              "Contraseña debe tener al menos 8 caracteres",
+                      })
+                    : setErrors({
+                          ...errors,
+                          confirmPasswordError: "",
+                      });
+                break;
+            default:
+                break;
         }
         const valorPassword = passwordRef.current.value;
         const valorConfPassword = cPasswordRef.current.value;
@@ -118,14 +121,22 @@ const UserForm = (props) => {
         e.preventDefault();
         const newUser = { form };
         const { firstName, lastName } = newUser.form;
-        console.log("Welcome", firstName, lastName);
-        setForm({
-            firstName: "",
-            lastName: "",
-            email: "",
-            confirmPassword: "",
-            password: "",
-        });
+        if (
+            Object.values(errors).filter(function (err) {
+                return err !== "" && err !== false;
+            }).length === 0
+        ) {
+            console.log("Welcome", firstName, lastName);
+            setForm({
+                firstName: "",
+                lastName: "",
+                email: "",
+                confirmPassword: "",
+                password: "",
+            });
+        } else {
+            console.log("Completa correctamente el Formulario");
+        }
     };
     const { firstName, lastName, email, confirmPassword, password } = form;
 
@@ -141,7 +152,7 @@ const UserForm = (props) => {
             <BoxStyled>
                 <Label htmlFor="firstName">Nombre</Label>
                 <Input
-                    onChange={validar}
+                    onChange={validarNameAndLastName}
                     type="text"
                     name="firstName"
                     value={firstName}
@@ -151,7 +162,7 @@ const UserForm = (props) => {
             <BoxStyled>
                 <Label htmlFor="lastName">Apellido</Label>
                 <Input
-                    onChange={validar}
+                    onChange={validarNameAndLastName}
                     type="text"
                     name="lastName"
                     value={lastName}
@@ -161,7 +172,7 @@ const UserForm = (props) => {
             <BoxStyled>
                 <Label htmlFor="email">Correo Electrónico</Label>
                 <Input
-                    onChange={validar}
+                    onChange={validarEmail}
                     type="text"
                     name="email"
                     value={email}
@@ -171,7 +182,7 @@ const UserForm = (props) => {
             <BoxStyled>
                 <Label htmlFor="password">Contraseña</Label>
                 <Input
-                    onChange={validar}
+                    onChange={validarPasword}
                     type="password"
                     name="password"
                     ref={passwordRef}
@@ -183,7 +194,7 @@ const UserForm = (props) => {
             <BoxStyled>
                 <Label htmlFor="confirmPassword">Confirmar Contraseña</Label>
                 <Input
-                    onChange={validar}
+                    onChange={validarPasword}
                     type="password"
                     name="confirmPassword"
                     ref={cPasswordRef}
